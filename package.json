@@ -9,6 +9,7 @@
     "url": "https://github.com/jansedivy/devs.git"
   },
   "main": "index.js",
+  "bin": "index.js",
   "devDependencies": {},
   "dependencies": {
     "browserify": "^5.9.1",
