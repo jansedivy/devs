@@ -7,6 +7,7 @@ var fileServer = new Static.Server(process.cwd());
 module.exports = {
   start: function(port, bundle, outputFile) {
     port = port || 8000;
+    outputFile = outputFile || 'bundle.js';
 
     var app = http.createServer(function(req, res) {
       var start = Date.now();

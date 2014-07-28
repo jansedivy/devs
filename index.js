@@ -10,11 +10,11 @@ var server = require('./server');
 
 program
   .version(require('./package.json').version)
-  .option('-p, --port <n>', 'Port for http server', parseInt)
+  .option('-p, --port <n>', 'Port for http server. defaults to 8000', parseInt)
+  .option('-o, --output <name>', 'filename for bundled output file. defaults to bundle.js')
   .parse(process.argv);
 
-var sourceFile = program.args[2];
-var outputFile = program.args[3] || 'bundle.js';
+var sourceFile = program.args[0];
 
 var bundle;
 
@@ -30,4 +30,4 @@ if (sourceFile) {
   bundle = watchify(browserify(path.join(process.cwd(), sourceFile), browserifyArgs));
 }
 
-server.start(program.port, bundle, outputFile);
+server.start(program.port, bundle, program.output);
