@@ -10,10 +10,10 @@ module.exports = {
     outputFile = outputFile || 'bundle.js';
 
     var app = http.createServer(function(req, res) {
-      var start = Date.now();
+      var log = function(status) {
+        var statusColor = status === 404 ? chalk.red : chalk.green;
 
-      var log = function() {
-        console.log(chalk.yellow(req.method) + ' ' + chalk.green(res.statusCode) + ' ' + req.url + ' ' + chalk.cyan((Date.now() - start) + 'ms'));
+        console.log(chalk.yellow(req.method) + ' ' + (statusColor(status)) + ' ' + req.url);
       };
 
       if (bundle && req.url === '/' + outputFile) {
@@ -24,15 +24,16 @@ module.exports = {
             return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
           }
 
-          log();
+          log(res.statusCode);
           res.setHeader('Content-Type', 'application/javascript');
           res.end(data);
         });
         return;
       }
 
-      fileServer.serve(req, res, function() {
-        log();
+      fileServer.serve(req, res, function(err, e) {
+        var status = e ? e.status : 404;
+        log(status);
       });
     });
 
