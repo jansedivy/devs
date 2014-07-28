@@ -1,18 +1,19 @@
 var http = require('http');
-var st = require('st');
+var Static = require('node-static');
+var chalk = require('chalk');
+
+var fileServer = new Static.Server(process.cwd());
 
 module.exports = {
   start: function(bundle, outputFile) {
-    var mount = st({
-      path: process.cwd(),
-      cache: false,
-      index: 'index.html'
-    });
-
     var app = http.createServer(function(req, res) {
-      console.log(req.method + ' ' + req.url);
+      var start = Date.now();
 
-      if (req.url === '/' + outputFile) {
+      var log = function() {
+        console.log(chalk.yellow(req.method) + ' ' + chalk.green(res.statusCode) + ' ' + req.url + ' ' + chalk.cyan((Date.now() - start) + 'ms'));
+      };
+
+      if (bundle && req.url === '/' + outputFile) {
         res.statusCode = 200;
 
         bundle.bundle(function(err, data) {
@@ -20,13 +21,16 @@ module.exports = {
             return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
           }
 
+          log();
           res.setHeader('Content-Type', 'application/javascript');
           res.end(data);
         });
         return;
       }
 
-      mount(req, res);
+      fileServer.serve(req, res, function() {
+        log();
+      });
     });
 
     app.listen(8000, function() {
