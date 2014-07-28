@@ -1,14 +1,20 @@
 #!/usr/bin/env node
 
 var watchify = require('watchify');
+var program = require('commander');
 
 var browserify = require('browserify');
 var path = require('path');
 
 var server = require('./server');
 
-var sourceFile = process.argv[2];
-var outputFile = process.argv[3] || 'bundle.js';
+program
+  .version(require('./package.json').version)
+  .option('-p, --port <n>', 'Port for http server', parseInt)
+  .parse(process.argv);
+
+var sourceFile = program.args[2];
+var outputFile = program.args[3] || 'bundle.js';
 
 var bundle;
 
@@ -24,4 +30,4 @@ if (sourceFile) {
   bundle = watchify(browserify(path.join(process.cwd(), sourceFile), browserifyArgs));
 }
 
-server.start(bundle, outputFile);
+server.start(program.port, bundle, outputFile);

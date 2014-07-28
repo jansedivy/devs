@@ -5,7 +5,9 @@ var chalk = require('chalk');
 var fileServer = new Static.Server(process.cwd());
 
 module.exports = {
-  start: function(bundle, outputFile) {
+  start: function(port, bundle, outputFile) {
+    port = port || 8000;
+
     var app = http.createServer(function(req, res) {
       var start = Date.now();
 
@@ -33,8 +35,8 @@ module.exports = {
       });
     });
 
-    app.listen(8000, function() {
-      console.log('Starting dev server on localhost:8000');
+    app.listen(port, function() {
+      console.log('Starting dev server on localhost:' + port);
     });
   }
 };
