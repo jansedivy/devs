@@ -39,8 +39,14 @@ module.exports = {
       }
 
       fileServer.serve(req, res, function(err, e) {
-        var status = e ? e.status : 404;
-        log(status, req);
+        if (err) {
+          console.error("> Error serving " + req.url + " - " + err.message);
+          res.writeHead(err.status, err.headers);
+          res.end();
+        } else {
+          var status = e ? e.status : 404;
+          log(status, req);
+        }
       });
     });
 
