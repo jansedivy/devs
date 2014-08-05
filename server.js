@@ -4,18 +4,18 @@ var chalk = require('chalk');
 
 var fileServer = new Static.Server(process.cwd(), { cache: 0 });
 
+var log = function(status, req) {
+  var statusColor = status === 404 ? chalk.red : chalk.green;
+
+  console.log(chalk.yellow(req.method) + ' ' + (statusColor(status)) + ' ' + req.url);
+};
+
 module.exports = {
   start: function(port, bundle, outputFile) {
     port = port || 8000;
     outputFile = outputFile || 'bundle.js';
 
     var app = http.createServer(function(req, res) {
-      var log = function(status) {
-        var statusColor = status === 404 ? chalk.red : chalk.green;
-
-        console.log(chalk.yellow(req.method) + ' ' + (statusColor(status)) + ' ' + req.url);
-      };
-
       if (bundle && req.url === '/' + outputFile) {
         res.statusCode = 200;
 
@@ -24,7 +24,7 @@ module.exports = {
             return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
           }
 
-          log(res.statusCode);
+          log(res.statusCode, req);
           res.setHeader('Content-Type', 'application/javascript');
           res.end(data);
         });
@@ -33,7 +33,7 @@ module.exports = {
 
       fileServer.serve(req, res, function(err, e) {
         var status = e ? e.status : 404;
-        log(status);
+        log(status, req);
       });
     });
 
