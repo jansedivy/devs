@@ -10,24 +10,31 @@ var log = function(status, req) {
   console.log(chalk.yellow(req.method) + ' ' + (statusColor(status)) + ' ' + req.url);
 };
 
+var serverBrowserify = function(bundle, outputFile, req, res) {
+  if (bundle && req.url === '/' + outputFile) {
+    res.statusCode = 200;
+
+    bundle.bundle(function(err, data) {
+      if (err) {
+        return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
+      }
+
+      log(res.statusCode, req);
+      res.setHeader('Content-Type', 'application/javascript');
+      res.end(data);
+    });
+    return true;
+  }
+};
+
+
 module.exports = {
   start: function(port, bundle, outputFile) {
     port = port || 8000;
     outputFile = outputFile || 'bundle.js';
 
     var app = http.createServer(function(req, res) {
-      if (bundle && req.url === '/' + outputFile) {
-        res.statusCode = 200;
-
-        bundle.bundle(function(err, data) {
-          if (err) {
-            return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
-          }
-
-          log(res.statusCode, req);
-          res.setHeader('Content-Type', 'application/javascript');
-          res.end(data);
-        });
+      if (serverBrowserify(bundle, outputFile, req, res)) {
         return;
       }
 
