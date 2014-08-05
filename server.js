@@ -2,7 +2,7 @@ var http = require('http');
 var Static = require('node-static');
 var chalk = require('chalk');
 
-var fileServer = new Static.Server(process.cwd());
+var fileServer = new Static.Server(process.cwd(), { cache: 0 });
 
 module.exports = {
   start: function(port, bundle, outputFile) {
