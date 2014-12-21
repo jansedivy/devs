@@ -1,6 +1,9 @@
 var http = require('http');
 var Static = require('node-static');
 var chalk = require('chalk');
+var sweetify = require('sweetify');
+
+var to5ify = require('6to5ify');
 
 var fileServer = new Static.Server(process.cwd(), { cache: 0 });
 
@@ -14,15 +17,17 @@ var serverBrowserify = function(bundle, outputFile, req, res) {
   if (bundle && req.url === '/' + outputFile) {
     res.statusCode = 200;
 
-    bundle.bundle(function(err, data) {
-      if (err) {
-        return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
-      }
+    bundle
+      .transform(to5ify)
+      .bundle(function(err, data) {
+        if (err) {
+          return res.end('document.body.innerHTML = \'' + err.toString() + '\'');
+        }
 
-      log(res.statusCode, req);
-      res.setHeader('Content-Type', 'application/javascript');
-      res.end(data);
-    });
+        log(res.statusCode, req);
+        res.setHeader('Content-Type', 'application/javascript');
+        res.end(data);
+      });
     return true;
   }
 };

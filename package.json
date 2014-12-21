@@ -12,10 +12,13 @@
   "bin": "index.js",
   "devDependencies": {},
   "dependencies": {
-    "browserify": "^5.9.1",
+    "6to5ify": "^2.0.0",
+    "browserify": "^7.0.3",
     "chalk": "^0.5.1",
+    "coffeeify": "^0.7.0",
     "commander": "^2.3.0",
     "node-static": "^0.7.4",
-    "watchify": "^1.0.0"
+    "sweetify": "^0.4.0",
+    "watchify": "^2.2.1"
   }
 }
